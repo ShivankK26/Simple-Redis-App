@@ -10,21 +10,23 @@ export const POST = async (req: NextRequest) => {
 
         const commentId = nanoid();
 
-        // adding a comment to the list
-        await redis.rpush('comments', commentId);
-
-        // add tags to comment
-        await redis.sadd(`tags:${commentId}`, tags);
-
         // retreive and store comment details
         const comment = {
             text,
+            tags: {
+                TypeScript: true,
+            },
+            upvotes: 0,
             timestamp: new Date(),
             author: req.cookies.get('userId')?.value,
         }
 
-        // 
-        await redis.hset(`comment_details: ${commentId}`, comment);
+        await Promise.all([
+         redis.rpush('comments', commentId), // adding a comment to the list
+         redis.json.set(`comment:${commentId}`, '$', comment),
+        //  redis.sadd(`tags:${commentId}`, tags), // add tags to comment
+        //  redis.hset(`comment_details: ${commentId}`, comment)
+        ])
         
         return new Response("OK");
     } catch (error) {

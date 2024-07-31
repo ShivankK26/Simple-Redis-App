@@ -17,7 +17,7 @@ export default function Home() {
       <div className="flex flex-col gap-8 items-start">
         <Link href='/comments' prefetch={false}>
         See Comments</Link>
-        <button onClick={comment}>make comment</button>
+        <button onClick={comment}>upvote</button>
       </div>
     )
 }
